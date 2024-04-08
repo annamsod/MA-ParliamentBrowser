@@ -1,4 +1,4 @@
-import { ListItem } from "@rneui/themed";
+import { ListItem, Avatar } from "@rneui/themed";
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import {
@@ -40,6 +40,24 @@ export default function App() {
           keyExtractor={({ id }) => id}
           renderItem={({ item }) => (
             <ListItem bottomDivider>
+              {item.image && item.image.url ? (
+                <Avatar
+                  rounded
+                  source={{
+                    uri: item.image.url,
+                  }}
+                />
+              ) : (
+                <Avatar
+                  rounded
+                  icon={{
+                    name: "person-outline",
+                    type: "material",
+                    size: 26,
+                  }}
+                  containerStyle={{ backgroundColor: "#c2c2c2" }}
+                />
+              )}
               <ListItem.Content>
                 <ListItem.Title>{item.name}</ListItem.Title>
               </ListItem.Content>
