@@ -1,3 +1,4 @@
+import { ListItem } from "@rneui/themed";
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import {
@@ -38,9 +39,11 @@ export default function App() {
           data={data}
           keyExtractor={({ id }) => id}
           renderItem={({ item }) => (
-            <Text>
-              {item.name}, {item.id}
-            </Text>
+            <ListItem bottomDivider>
+              <ListItem.Content>
+                <ListItem.Title>{item.name}</ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
           )}
         />
       )}
