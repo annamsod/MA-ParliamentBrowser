@@ -15,9 +15,22 @@ export default function App() {
 
   const getPersonsFromAPI = async () => {
     try {
-      const response = await fetch("https://api.lagtinget.ax/api/persons.json");
-      const json = await response.json();
-      const sittingMembers = json.filter((person) => person.state === "1");
+      let sittingMembers = [];
+      let offset = 0;
+      const limit = 50;
+
+      while (true) {
+        const response = await fetch(
+          `https://api.lagtinget.ax/api/persons.json?limit=${limit}&offset=${offset}`
+        );
+        const json = await response.json();
+        const newMembers = json.filter((person) => person.state === "1");
+        sittingMembers = [...sittingMembers, ...newMembers];
+        offset += limit;
+        if (json.length < limit) {
+          break;
+        }
+      }
       setData(sittingMembers);
     } catch (error) {
       console.error("Error loading data!", error);
