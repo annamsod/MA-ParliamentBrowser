@@ -1,3 +1,5 @@
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ListItem, Avatar } from "@rneui/themed";
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
@@ -9,7 +11,7 @@ import {
   View,
 } from "react-native";
 
-export default function App() {
+function HomeScreen() {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
@@ -82,17 +84,14 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-  },
-  item: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
-  title: {
-    fontSize: 32,
-  },
-});
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Alla ledamöter" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
