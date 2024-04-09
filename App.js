@@ -1,7 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ListItem, Avatar } from "@rneui/themed";
-import { StatusBar } from "expo-status-bar";
+import { ListItem, Avatar, SearchBar } from "@rneui/themed";
 import React, { useState, useEffect } from "react";
 import {
   ActivityIndicator,
@@ -13,9 +12,27 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+function SearchBarComponent({ setSearch, search }) {
+  const updateSearch = (searchValue) => {
+    setSearch(searchValue);
+  };
+
+  return (
+    <View style={styles.container}>
+      <SearchBar
+        placeholder="Sök ledamot"
+        onChangeText={updateSearch}
+        value={search}
+        lightTheme
+      />
+    </View>
+  );
+}
+
 function HomeScreen({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
 
   const getPersonsFromAPI = async () => {
     try {
@@ -25,7 +42,7 @@ function HomeScreen({ navigation }) {
 
       while (true) {
         const response = await fetch(
-          `https://api.lagtinget.ax/api/persons.json?limit=${limit}&offset=${offset}`
+          `https://api.lagtinget.ax/api/persons?limit=${limit}&offset=${offset}`
         );
         const json = await response.json();
         const newMembers = json.filter((person) => person.state === "1");
@@ -47,13 +64,20 @@ function HomeScreen({ navigation }) {
     getPersonsFromAPI();
   }, []);
 
+  const filteredData = data.filter((person) =>
+    person.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <View style={{ flex: 1, padding: 24 }}>
+      {!isLoading && ( // Render SearchBarComponent only if not loading
+        <SearchBarComponent setSearch={setSearch} search={search} />
+      )}
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <FlatList
-          data={data}
+          data={filteredData}
           keyExtractor={({ id }) => id}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -179,5 +203,8 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginRight: 5,
+  },
+  view: {
+    margin: 10,
   },
 });
