@@ -1,9 +1,29 @@
 import { useState, useEffect } from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, ActivityIndicator } from "react-native";
 
-export const DetailView = ({ route, navigation }) => {
+export const DetailScreen = ({ route, navigation }) => {
   const { person } = route.params;
   const [age, setAge] = useState(null);
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+  const getMoreDataFromAPI = async () => {
+    try {
+      const response = await fetch(
+        `https://api.lagtinget.ax/api/persons/${person.id}`
+      );
+      const json = await response.json();
+      setData(json);
+    } catch (error) {
+      console.error("Error loading data!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getMoreDataFromAPI();
+  }, []);
 
   const calculateAge = () => {
     const birthday = new Date(person.birthday);
@@ -20,48 +40,81 @@ export const DetailView = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    // Calculate the age when the component mounts
     const personAge = calculateAge();
     setAge(personAge);
   }, []);
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <View
-        style={{ width: "80%", alignItems: "center", justifyContent: "center" }}
-      >
-        {person.image && person.image.url ? (
-          <Image
-            style={{ width: "100%", aspectRatio: 1 }} // Adjust the size as needed
-            source={{ uri: person.image.url }}
-          />
-        ) : (
-          <Image
-            style={{ width: "100%", aspectRatio: 1 }} // Adjust the size as needed
-            source={require("./icon.png")}
-          />
-        )}
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Namn: </Text>
-        <Text>{person.name}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Adress: </Text>
-        <Text>{person.address}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Kommun: </Text>
-        <Text>{person.city}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Födelsedag: </Text>
-        <Text>{person.birthday}</Text>
-      </View>
-      {age !== null && (
-        <View style={styles.row}>
-          <Text style={styles.label}>Ålder: </Text>
-          <Text>{age}</Text>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <View>
+          <View
+            style={{
+              width: "80%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {person.image && person.image.url ? (
+              <Image
+                style={{ width: "100%", aspectRatio: 1 }}
+                source={{ uri: person.image.url }}
+              />
+            ) : (
+              <Image
+                style={{ width: "100%", aspectRatio: 1 }}
+                source={require("./icon.png")}
+              />
+            )}
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Namn:</Text>
+            <Text>{person.name}</Text>
+          </View>
+          {person.address !== "" && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Adress:</Text>
+              <Text>{person.address}</Text>
+            </View>
+          )}
+          {person.city !== "" && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Kommun:</Text>
+              <Text>{person.city}</Text>
+            </View>
+          )}
+          {person.birthday !== "" && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Födelsedag:</Text>
+              <Text>{person.birthday}</Text>
+            </View>
+          )}
+          {age !== null && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Ålder:</Text>
+              <Text>{age}</Text>
+            </View>
+          )}
+          {data.profession !== "" && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Yrke:</Text>
+              <Text>{data.profession}</Text>
+            </View>
+          )}
+          {data.phone !== "" && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Telefon:</Text>
+              <Text>{data.phone}</Text>
+            </View>
+          )}
+          {data.email !== "" && (
+            <View style={styles.row}>
+              <Text style={styles.label}>E-mail:</Text>
+              <Text>{data.email}</Text>
+            </View>
+          )}
         </View>
       )}
     </View>
