@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useState, useEffect } from "react";
 import { View, Image, Text, StyleSheet, ActivityIndicator } from "react-native";
 
@@ -64,7 +65,7 @@ export const DetailScreen = ({ route, navigation }) => {
               />
             ) : (
               <Image
-                style={{ width: "100%", aspectRatio: 1 }}
+                style={{ width: "100%", aspectRatio: 0.8 }}
                 source={require("./icon.png")}
               />
             )}
@@ -88,7 +89,7 @@ export const DetailScreen = ({ route, navigation }) => {
           {person.birthday !== "" && (
             <View style={styles.row}>
               <Text style={styles.label}>Födelsedag:</Text>
-              <Text>{person.birthday}</Text>
+              <Text>{moment(person.birthday).format("DD.MM YYYY")}</Text>
             </View>
           )}
           {age !== null && (
