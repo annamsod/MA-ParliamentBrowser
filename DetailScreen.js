@@ -8,6 +8,7 @@ export const DetailScreen = ({ route, navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
+  //Fetch all the data for the chosen person from the API
   const getMoreDataFromAPI = async () => {
     try {
       const response = await fetch(
@@ -26,6 +27,7 @@ export const DetailScreen = ({ route, navigation }) => {
     getMoreDataFromAPI();
   }, []);
 
+  //Calculate the age
   const calculateAge = () => {
     const birthday = new Date(person.birthday);
     const today = new Date();
@@ -45,6 +47,8 @@ export const DetailScreen = ({ route, navigation }) => {
     setAge(personAge);
   }, []);
 
+  //Show the picture of the person and all the data basic data that exists in the API
+  //If some data is missing thet row is not shown at all
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       {isLoading ? (
